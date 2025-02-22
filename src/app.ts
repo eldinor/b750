@@ -1,13 +1,6 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
-import {
-  Engine,
-  Scene,
-  AxesViewer,
-  Vector3,
-  ArcRotateCamera,
-  HavokPlugin,
-} from "@babylonjs/core";
+import { Engine, Scene, AxesViewer, Vector3, ArcRotateCamera, HavokPlugin } from "@babylonjs/core";
 import HavokPhysics from "@babylonjs/havok";
 
 import MainScene from "./playground/main-scene";
@@ -17,6 +10,7 @@ class App {
   public scene: Scene;
 
   private canvas: HTMLCanvasElement;
+  private axeViewer: AxesViewer | null;
 
   constructor() {
     // create the canvas html element and attach it to the webpage
@@ -78,6 +72,20 @@ class App {
           this.scene.debugLayer.show();
         }
       }
+      if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.keyCode === 65) {
+        if (!this.axeViewer) {
+          this.axeViewer = new AxesViewer(this.scene);
+        }
+        if (this.axeViewer!.xAxis.isEnabled()) {
+          this.axeViewer!.xAxis.setEnabled(false);
+          this.axeViewer!.yAxis.setEnabled(false);
+          this.axeViewer!.zAxis.setEnabled(false);
+        } else {
+          this.axeViewer!.xAxis.setEnabled(true);
+          this.axeViewer!.yAxis.setEnabled(true);
+          this.axeViewer!.zAxis.setEnabled(true);
+        }
+      }
     });
 
     // resize window
@@ -96,7 +104,8 @@ class App {
   // Auxiliary Class Configuration
   _config(): void {
     // Axes
-    new AxesViewer();
+    //  const av = new AxesViewer();
+    //  console.log(av);
 
     // inspector
     this._bindEvent();
