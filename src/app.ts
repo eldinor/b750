@@ -1,13 +1,6 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
-import {
-  Engine,
-  Scene,
-  AxesViewer,
-  Vector3,
-  ArcRotateCamera,
-  HavokPlugin,
-} from "@babylonjs/core";
+import { Engine, Scene, AxesViewer, Vector3, ArcRotateCamera, HavokPlugin } from "@babylonjs/core";
 import HavokPhysics from "@babylonjs/havok";
 
 import MainScene from "./playground/main-scene";
@@ -96,7 +89,7 @@ class App {
   // Auxiliary Class Configuration
   _config(): void {
     // Axes
-    new AxesViewer();
+    //  new AxesViewer();
 
     // inspector
     this._bindEvent();
