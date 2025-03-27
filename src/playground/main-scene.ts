@@ -6,6 +6,7 @@ import {
   Scene,
   Tools,
   Vector3,
+  WebGPUEngine,
 } from "@babylonjs/core";
 import "@babylonjs/loaders";
 
@@ -14,25 +15,14 @@ import { Ground } from "./ground";
 export default class MainScene {
   private camera: ArcRotateCamera;
 
-  constructor(
-    private scene: Scene,
-    private canvas: HTMLCanvasElement,
-    private engine: Engine
-  ) {
+  constructor(private scene: Scene, private canvas: HTMLCanvasElement, private engine: Engine | WebGPUEngine) {
     this._setCamera(scene);
     this._setLight(scene);
     this.loadComponents();
   }
 
   _setCamera(scene: Scene): void {
-    this.camera = new ArcRotateCamera(
-      "camera",
-      Tools.ToRadians(90),
-      Tools.ToRadians(80),
-      20,
-      Vector3.Zero(),
-      scene
-    );
+    this.camera = new ArcRotateCamera("camera", Tools.ToRadians(90), Tools.ToRadians(80), 20, Vector3.Zero(), scene);
     this.camera.attachControl(this.canvas, true);
     this.camera.setTarget(Vector3.Zero());
   }
@@ -43,15 +33,12 @@ export default class MainScene {
   }
 
   _setPipeLine(): void {
-    const pipeline = new DefaultRenderingPipeline(
-      "default-pipeline",
-      false,
-      this.scene,
-      [this.scene.activeCamera!]
-    );
+    const pipeline = new DefaultRenderingPipeline("default-pipeline", false, this.scene, [this.scene.activeCamera!]);
+    pipeline.fxaaEnabled = true;
+    pipeline.samples = 4;
   }
 
-  loadComponents(): void {
+  async loadComponents(): Promise<void> {
     // Load your files in order
     new Ground(this.scene);
   }

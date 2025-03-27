@@ -1,19 +1,12 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
-import {
-  Engine,
-  Scene,
-  AxesViewer,
-  Vector3,
-  ArcRotateCamera,
-  HavokPlugin,
-} from "@babylonjs/core";
+import { Engine, Scene, AxesViewer, Vector3, ArcRotateCamera, HavokPlugin, WebGPUEngine } from "@babylonjs/core";
 import HavokPhysics from "@babylonjs/havok";
 
 import MainScene from "./playground/main-scene";
 
 class App {
-  public engine: Engine;
+  public engine: Engine | WebGPUEngine;
   public scene: Scene;
 
   private canvas: HTMLCanvasElement;
@@ -26,7 +19,8 @@ class App {
     this.canvas.id = "renderCanvas";
     document.body.appendChild(this.canvas);
 
-    this.init();
+    //  this.init();
+    this.initWebGPU();
   }
 
   async init(): Promise<void> {
@@ -39,6 +33,25 @@ class App {
 
     this.scene = new Scene(this.engine);
 
+    // Add physics. If not needed, you can annotate it to improve loading speed and environment performance.
+    await this._setPhysics();
+
+    new MainScene(this.scene, this.canvas, this.engine);
+
+    this._config();
+    this._renderer();
+  }
+
+  async initWebGPU(): Promise<void> {
+    const webgpu = (this.engine = new WebGPUEngine(this.canvas, {
+      adaptToDeviceRatio: true,
+      antialias: true,
+    }));
+    await webgpu.initAsync();
+    this.engine = webgpu;
+    console.log(this.engine);
+
+    this.scene = new Scene(this.engine);
     // Add physics. If not needed, you can annotate it to improve loading speed and environment performance.
     await this._setPhysics();
 
